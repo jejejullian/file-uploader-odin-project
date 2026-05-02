@@ -1,0 +1,37 @@
+Hasil Claude:
+file-uploader/
+├── src/
+│   ├── app.js                    ← entry point server
+│   ├── controllers/              ← logika bisnis
+│   │   ├── authController.js
+│   │   ├── folderController.js
+│   │   └── fileController.js
+│   ├── routes/                   ← definisi URL
+│   │   ├── authRoutes.js
+│   │   ├── folderRoutes.js
+│   │   └── fileRoutes.js
+│   ├── middleware/               ← fungsi yang berjalan sebelum route
+│   │   └── authMiddleware.js
+│   └── config/                  ← konfigurasi
+│       ├── passport.js
+│       └── multer.js
+├── views/                        ← tampilan (V di MVC)
+│   ├── partials/
+│   │   ├── header.ejs (opsional)
+│   │   └── navbar.ejs (opsional)
+│   ├── auth/
+│   │   ├── login.ejs
+│   │   └── register.ejs
+│   ├── folders/
+│   │   ├── index.ejs
+│   │   └── show.ejs
+│   ├── files/
+│   │   └── detail.ejs
+│   └── dashboard.ejs
+├── prisma/
+│   └── schema.prisma
+├── public/
+│   ├── css/
+│   └── uploads/
+├── .env
+└── package.json

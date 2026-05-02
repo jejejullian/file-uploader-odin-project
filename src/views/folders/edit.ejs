@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Folder</title>
+</head>
+<body>
+    <h1>Edit Nama Folder</h1>
+    <form action="/folders/<%= folder.id %>/edit" method="post">
+        <label for="name">Nama Baru:</label>
+        <input type="text" name="name" id="name" value="<%= folder.name %>" required>
+        <button type="submit">Simpan Perubahan</button>
+    </form>
+    <br>
+    <a href="/">batal</a>
+</body>
+</html>

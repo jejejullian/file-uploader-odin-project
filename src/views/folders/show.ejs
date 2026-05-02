@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>
+    <%= folder.name %> - Detail Folder
+  </title>
+
+</head>
+
+<body>
+
+  <body>
+    <header>
+      <h1>Folder: <%= folder.name %>
+      </h1>
+      <a href="/">← Kembali ke Dashboard</a>
+    </header>
+
+    <main>
+      <section style="margin-top: 20px; padding: 15px; border: 1px solid #ccc;">
+        <h3>Upload File Baru</h3>
+        <form action="/files/upload" method="POST" enctype="multipart/form-data">
+          <input type="hidden" name="folderId" value="<%= folder.id %>">
+
+          <input type="file" name="file_uploader" required>
+
+          <button type="submit">Upload ke Folder Ini</button>
+        </form>
+      </section>
+
+      <section style="margin-top: 30px;">
+        <h3>Daftar File</h3>
+        <ul>
+          <% if (folder.files && folder.files.length> 0) { %>
+          <% folder.files.forEach(file=> { %>
+          <li>
+            <a href="/files/<%= file.id %>"><%= file.name %></a>
+            (<%= (file.size / 1024).toFixed(2) %> KB)
+
+            <form action="/files/<%= file.id %>/delete" method="post" style="display: inline;" onsubmit="return confirm('Yakin ingin menghapus file ini?')">
+              <button type="submit" style="color: red; border: none; background: none; cursor: pointer;">
+                [Hapus]
+              </button>
+            </form>
+          </li>
+          <% }) %>
+          <% } else { %>
+          <p>Folder ini kosong. Silakan upload file pertama kamu!</p>
+          <% } %>
+        </ul>
+      </section>
+
+      <hr>
+
+      <section style="margin-top: 40px; padding: 15px; border: 2px dashed #007bff; border-radius: 8px;">
+        <h3>🔗 Bagikan Folder Ini</h3>
+        <form action="/folders/<%= folder.id %>/share" method="POST">
+          <label for="duration">Masa Berlaku Link:</label>
+          <select name="duration" id="duration" required>
+            <option value="1">1 Hari</option>
+            <option value="3">3 Hari</option>
+            <option value="7">7 Hari</option>
+            <option value="10">10 Hari</option>
+          </select>
+          <button type="submit" style="background-color: #007bff; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">
+            Generate Share Link
+          </button>
+        </form>
+
+        <% if (folder.shareLinks && folder.shareLinks.length > 0) { %>
+        <div style="margin-top: 15px;">
+          <p><strong>Link Aktif:</strong></p>
+          <ul>
+            <% folder.shareLinks.forEach(link => { %>
+            <li>
+              <input type="text" readonly value="http://localhost:3000/share/<%= link.id %>" style="width: 300px;">
+              <small>(Berakhir: <%= link.expiresAt.toLocaleString('id-ID') %>)</small>
+            </li>
+            <% }) %>
+          </ul>
+        </div>
+        <% } %>
+      </section>
+    </main>
+  </body>
+</body>
+
+</html>

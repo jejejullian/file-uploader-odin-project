@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Detail File - <%= file.name %></title>
+</head>
+<body>
+    <h1>Informasi File</h1>
+    <ul>
+        <li><strong>Nama:</strong> <%= file.name %></li>
+        <li><strong>Ukuran:</strong> <%= (file.size / 1024).toFixed(2) %> KB</li>
+        <li><strong>Waktu Upload:</strong> <%= file.uploadedAt.toLocaleString('id-ID') %></li>
+    </ul>
+
+    <a href="<%= file.url %>" download="<%= file.name %>">
+        <button type="button">Download File</button>
+    </a>
+
+    <hr>
+    <a href="/folders/<%= file.folderId %>">← Kembali ke Folder</a>
+</body>
+</html>

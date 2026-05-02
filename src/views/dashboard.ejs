@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard - My File Uploader</title>
+</head>
+
+<body>
+  <header>
+    <h1>File Uploader</h1>
+    <p>Selamat datang, <strong><%= user.email %></strong>!</p>
+    <nav>
+      <a href="/logout">Logout</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2>My Folders</h2>
+
+    <div style="margin-bottom: 20px;">
+      <a href="/folders/create" style="padding: 10px; background: blue; color: white; text-decoration: none; border-radius: 5px;">
+        + New Folder
+      </a>
+    </div>
+
+    <ul>
+      <% if (typeof folders !== 'undefined' && folders.length > 0) { %>
+      <% folders.forEach(folder => { %>
+      <li>
+        <a href="/folders/<%= folder.id %>"><%= folder.name %></a>
+        <small>(Dibuat pada: <%= folder.createdAt.toDateString() %>)</small>
+
+        <a href="/folders/<%= folder.id %>/edit" style="margin-left: 10px; color: green; text-decoration: none;">[Edit]</a>
+        
+        <form action="/folders/<%= folder.id %>/delete" method="POST" style="display:inline;" onsubmit="return confirm('Yakin ingin menghapus folder ini?')">
+          <button type="submit" style="color: red; border: none; background: none; cursor: pointer;">[Hapus]</button>
+        </form>
+      </li>
+      <% }) %>
+      <% } else { %>
+      <p>Belum ada folder di sini.</p>
+      <% } %>
+    </ul>
+  </main>
+</body>
+
+</html>

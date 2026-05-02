@@ -1,0 +1,185 @@
+📍 Kamu Berada di Mana?
+Kamu baru saja menyelesaikan Fase 1 (Fondasi) dan Fase 2 (Autentikasi) secara teknis (mesinnya sudah hidup).
+
+Status Saat Ini:
+Database: Sudah siap dengan skema User, Folder, File, dan Session.
+
+Backend: Express, Passport, dan Prisma sudah terhubung.
+
+Progress: Pintu gerbang (Register) sudah terbuka.
+
+🗺️ Roadmap Project: File Uploader (Fase Selanjutnya)
+Fase 2.5: Verifikasi Autentikasi (Target Malam Ini?)
+Sebelum masuk ke fitur folder, kamu harus memastikan user bisa login dan sistem tahu siapa yang login.
+
+[ ] Buat file src/views/auth/login.ejs.
+
+[ ] Buat file src/views/dashboard.ejs (Halaman utama setelah login).
+
+[ ] Test: Daftar -> Login -> Masuk Dashboard (Muncul tulisan "Halo, [email kamu]").
+
+
+---------------------------------------------------------------------
+
+Fase 3: Manajemen Folder (CRUD)
+1. Alur "Create": Menambah Folder Baru
+Tujuan: Membuat folder baru yang terikat pada User ID.
+
+Langkah A (Tampilan):
+
+File: src/views/folders/index.ejs (Gunakan halaman index untuk menampilkan tombol "New Folder" atau form simpel).
+
+Isi: Form dengan method="POST" dan action="/folders/create". Tambahkan <input type="text" name="name">.
+
+Langkah B (Routing):
+
+File: src/routes/folderRoutes.js.
+
+Isi: Tambahkan router.post('/create', folderController.postCreate).
+
+Langkah C (Logic Controller):
+
+File: src/controllers/folderController.js.
+
+Fungsi: postCreate.
+
+Logic: Ambil name dari req.body dan userId dari req.user.id. Panggil prisma.folder.create. Setelah sukses, res.redirect('/').
+
+2. Alur "Read": Menampilkan Daftar Folder
+Tujuan: Menampilkan semua folder milik user di halaman utama.
+
+Langkah A (Logic Controller):
+
+File: src/controllers/folderController.js.
+
+Fungsi: index.
+
+Logic: Panggil prisma.folder.findMany dengan filter { where: { userId: req.user.id } }.
+
+Langkah B (Tampilan Dashboard):
+
+File: src/views/dashboard.ejs.
+
+Isi: Gunakan loop EJS <% folders.forEach(...) %> untuk merender daftar folder. Pastikan setiap nama folder dibungkus link <a href="/folders/<%= folder.id %>">.
+
+3. Alur "Update": Mengubah Nama Folder
+Tujuan: Mengganti nama folder yang sudah ada.
+
+Langkah A (Tampilan Edit):
+
+File: src/views/folders/index.ejs (atau buat tombol edit di samping setiap folder).
+
+Isi: Form edit yang mengirim data ke router.post('/:id/edit', ...).
+
+Langkah B (Logic Controller):
+
+File: src/controllers/folderController.js.
+
+Fungsi: postEdit.
+
+Logic Keamanan: Cari folder berdasarkan id dan pastikan userId-nya sama dengan user yang sedang login. Jika tidak sama, lempar error atau redirect. Jika aman, jalankan prisma.folder.update.
+
+4. Alur "Delete": Menghapus Folder
+Tujuan: Menghapus folder tertentu.
+
+Langkah A (Logic Controller):
+
+File: src/controllers/folderController.js.
+
+Fungsi: delete.
+
+Logic Keamanan: WAJIB cek kepemilikan folder sebelum prisma.folder.delete. Jangan biarkan user A menghapus folder user B hanya lewat ID di URL.
+
+Langkah B (Redirection):
+
+Setelah dihapus, redirect kembali ke Dashboard /.
+
+------------------------------------------------
+
+☁️ Fase 4: File Upload (Multer & Cloud Integration)
+1. Persiapan "Pintu Masuk" (Setup Multer)
+Tujuan: Menangkap file binary dari form EJS agar bisa diproses oleh Node.js.
+
+Langkah A (Konfigurasi Middleware):
+
+File: src/config/multer.js (Kamu bisa taruh di config karena ini bersifat pengaturan alat).
+
+Logic: Gunakan multer.memoryStorage() karena kita akan langsung mengirim file ke Cloud tanpa menyimpannya secara permanen di WSL kamu.
+
+Langkah B (Update Route):
+
+File: src/routes/fileRoutes.js.
+
+Logic: Impor konfigurasi multer tadi, lalu pasang di rute upload. Contoh: router.post('/upload', upload.single('file_input_name'), fileController.upload).
+
+2. Pengiriman ke "Gudang" (Cloud Integration)
+Tujuan: Mengirim file dari memori server kamu ke Cloudinary atau Supabase.
+
+Langkah A (Koneksi Cloud):
+
+File: .env (Simpan CLOUDINARY_URL atau SUPABASE_KEY di sini).
+
+File: src/config/cloudinary.js (atau supabase.js). Isinya adalah inisialisasi SDK menggunakan data dari .env.
+
+Langkah B (Logika Upload di Controller):
+
+File: src/controllers/fileController.js.
+
+Fungsi: upload.
+
+Logic: Gunakan fungsi upload dari SDK Cloudinary/Supabase. Kamu perlu mengubah req.file.buffer menjadi aliran data yang bisa diterima oleh API mereka.
+
+3. Pencatatan di "Buku Induk" (Prisma Update)
+Tujuan: Menyimpan metadata file ke database PostgreSQL kamu.
+
+Langkah A (Database Entry):
+
+File: src/controllers/fileController.js (Lanjutan dari langkah sebelumnya).
+
+Logic: Jika upload cloud sukses, panggil prisma.file.create.
+
+Data yang disimpan: Nama asli file (req.file.originalname), ukuran (req.file.size), URL dari cloud, userId, dan folderId (diambil dari parameter URL atau body).
+
+Langkah B (Redirection):
+
+Logic: Jika simpan database sukses, res.redirect kembali ke folder tempat user berada atau ke Dashboard.
+
+4. Alur "View & Download"
+Tujuan: Menampilkan detail file dan memberikan akses unduh.
+
+Langkah A (Detail File):
+
+File: src/views/files/detail.ejs.
+
+Isi: Tampilkan info file seperti tipe file, ukuran (dalam KB/MB), dan tanggal upload.
+
+Langkah B (Proses Download):
+
+File: src/views/files/detail.ejs.
+
+Isi: Buat tag <a> dengan atribut download yang mengarah langsung ke URL cloud yang disimpan di database.
+
+🛠️ Panduan Eksekusi (Step-by-Step)
+Supaya tidak pusing, kerjakan urutan ini setelah Fase 3 selesai:
+
+Instal Library: Jalankan npm install multer cloudinary (atau supabase SDK).
+
+Siapkan Middleware: Isi src/config/multer.js untuk menangani file di memori.
+
+Buat View Upload: Di src/views/folders/show.ejs, buat form upload:
+
+HTML
+<form action="/files/upload" method="POST" enctype="multipart/form-data">
+  <input type="file" name="file_uploader">
+  <input type="hidden" name="folderId" value="<%= folder.id %>">
+  <button type="submit">Upload</button>
+</form>
+Isi Controller: Kerjakan logika di src/controllers/fileController.js. Gunakan blok try...catch yang kuat agar jika upload cloud gagal, database tidak ikut kotor (dan sebaliknya).
+
+Ingat: Karena kamu pakai WSL, pastikan koneksi internet di terminal kamu lancar agar proses kirim file ke Cloud tidak timeout.
+
+-----------------------------------------------
+Fase 5: Fitur Tambahan (Extra Credit) 🔗
+[ ] Detail file (ukuran, tipe, tanggal).
+
+[ ] Fitur Share Link (Berbagi folder ke orang lain pakai link unik).
