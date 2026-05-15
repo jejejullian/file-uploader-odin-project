@@ -1,0 +1,204 @@
+================================================================
+  PANDUAN DEPLOY FILE VAULT KE RAILWAY (GRATIS)
+  Tech Stack: Express.js + EJS + Prisma + PostgreSQL + Cloudinary
+================================================================
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  PERSIAPAN SEBELUM DEPLOY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Pastikan file berikut sudah ada di project:
+   - package.json  (ada script "start": "node src/app.js") ✅
+   - .gitignore    (node_modules, .env, generated/ excluded) ✅
+   - prisma/schema.prisma                                   ✅
+
+2. Pastikan repo sudah ter-push ke GitHub:
+   → https://github.com/jejejullian/file-uploader-odin-project ✅
+
+3. Siapkan nilai environment variables dari file .env lokal:
+   - DATABASE_URL         (nanti diganti URL dari Railway PostgreSQL)
+   - SESSION_SECRET       (salin dari .env lokal)
+   - CLOUDINARY_CLOUD_NAME
+   - CLOUDINARY_API_KEY
+   - CLOUDINARY_API_SECRET
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  LANGKAH 1 — DAFTAR / LOGIN KE RAILWAY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Buka browser, pergi ke:
+   → https://railway.app
+
+2. Klik tombol "Start a New Project" atau "Login"
+
+3. Pilih "Login with GitHub"
+   → Authorize Railway untuk akses GitHub Anda
+
+4. Setelah login, Anda akan masuk ke dashboard Railway
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  LANGKAH 2 — BUAT PROJECT BARU DI RAILWAY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Di dashboard, klik "+ New Project"
+
+2. Pilih "Deploy from GitHub repo"
+
+3. Cari dan pilih repo:
+   → file-uploader-odin-project
+
+4. Railway akan otomatis mendeteksi ini adalah Node.js project
+
+5. Klik "Deploy Now"
+   (Biarkan deploy pertama ini GAGAL dulu — belum ada DB & env vars)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  LANGKAH 3 — TAMBAHKAN DATABASE POSTGRESQL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Di halaman project Railway, klik "+ New"
+
+2. Pilih "Database" → "Add PostgreSQL"
+
+3. Railway akan membuat database PostgreSQL baru secara otomatis
+
+4. Klik pada service "Postgres" yang baru dibuat
+
+5. Pergi ke tab "Variables"
+
+6. Salin nilai "DATABASE_URL" yang tersedia
+   (Formatnya: postgresql://user:password@host:port/dbname)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  LANGKAH 4 — SET ENVIRONMENT VARIABLES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Klik pada service aplikasi Anda (bukan Postgres)
+
+2. Pergi ke tab "Variables"
+
+3. Klik "Add Variable" dan masukkan satu per satu:
+
+   ┌─────────────────────────┬──────────────────────────────────┐
+   │ KEY                     │ VALUE                            │
+   ├─────────────────────────┼──────────────────────────────────┤
+   │ DATABASE_URL            │ (salin dari Railway PostgreSQL)  │
+   │ SESSION_SECRET          │ (salin dari .env lokal Anda)     │
+   │ CLOUDINARY_CLOUD_NAME   │ (dari akun Cloudinary Anda)      │
+   │ CLOUDINARY_API_KEY      │ (dari akun Cloudinary Anda)      │
+   │ CLOUDINARY_API_SECRET   │ (dari akun Cloudinary Anda)      │
+   │ NODE_ENV                │ production                       │
+   └─────────────────────────┴──────────────────────────────────┘
+
+   TIPS: Bisa juga klik "Raw Editor" dan paste semua sekaligus
+         dalam format KEY=VALUE
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  LANGKAH 5 — JALANKAN PRISMA MIGRATE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Prisma perlu membuat tabel di database Railway sebelum app bisa jalan.
+
+CARA 1 — Lewat Railway Shell (Direkomendasikan):
+   1. Klik service aplikasi → tab "Settings"
+   2. Scroll ke bagian "Deploy" → cari "Start Command"
+   3. Sementara ubah Start Command menjadi:
+      npx prisma migrate deploy
+   4. Redeploy → tunggu sampai migration berhasil (cek logs)
+   5. Ubah kembali Start Command ke:
+      node src/app.js
+   6. Redeploy lagi
+
+CARA 2 — Tambah script di package.json:
+   Tambahkan script ini di package.json:
+   "build": "npx prisma migrate deploy"
+
+   Lalu di Railway → Settings → set:
+   Build Command : npm run build
+   Start Command : node src/app.js
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  LANGKAH 6 — SET DOMAIN (URL PUBLIK)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Klik service aplikasi → tab "Settings"
+
+2. Scroll ke bagian "Networking"
+
+3. Klik "Generate Domain"
+
+4. Railway akan memberikan URL publik seperti:
+   → https://file-uploader-production.up.railway.app
+
+5. UPDATE share link di show.ejs:
+   Ubah "http://localhost:3000" menjadi URL Railway Anda
+   di file: src/views/folders/show.ejs (baris share link input)
+
+   Lalu push ke GitHub:
+   git add src/views/folders/show.ejs
+   git commit -m "fix: update share link URL to production domain"
+   git push origin main
+
+   Railway akan auto-redeploy setelah push!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  LANGKAH 7 — VERIFIKASI DEPLOY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Buka URL publik Railway di browser
+
+2. Test fitur:
+   □ Halaman login tampil dengan benar
+   □ Bisa register akun baru
+   □ Bisa login
+   □ Dashboard tampil folder (kosong = normal)
+   □ Bisa buat folder baru
+   □ Bisa upload file ke folder
+   □ Share link berfungsi
+
+3. Jika ada error → cek tab "Logs" di Railway untuk debug
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  TROUBLESHOOTING UMUM
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+❌ Error: "Cannot find module"
+   → Pastikan node_modules tidak di-push (ada di .gitignore)
+   → Railway akan jalankan npm install otomatis
+
+❌ Error: "P1001: Can't reach database"
+   → Cek DATABASE_URL sudah di-set dengan benar di Variables
+   → Pastikan Railway PostgreSQL service sudah running
+
+❌ Error: "Table does not exist"
+   → Prisma migrate belum dijalankan → ikuti Langkah 5
+
+❌ Session tidak persistent / logout terus
+   → Pastikan SESSION_SECRET sudah di-set
+   → PrismaSessionStore akan menyimpan session di PostgreSQL
+
+❌ Upload file gagal
+   → Cek semua CLOUDINARY_* environment variables sudah benar
+   → Login ke cloudinary.com untuk cek API credentials
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  INFO PENTING — FREE TIER RAILWAY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+• Railway memberikan $5 credit/bulan untuk free tier
+• Aplikasi kecil seperti ini biasanya cukup untuk sebulan penuh
+• Tidak ada "sleep" seperti Render — app selalu aktif
+• Pantau usage di: railway.app → Settings → Usage
+• Jika credit habis, app akan pause sampai bulan berikutnya
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  LINK BERGUNA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+• Railway Dashboard  : https://railway.app/dashboard
+• Railway Docs       : https://docs.railway.app
+• Cloudinary Console : https://console.cloudinary.com
+• GitHub Repo        : https://github.com/jejejullian/file-uploader-odin-project
+• Prisma Migrate     : https://www.prisma.io/docs/concepts/components/prisma-migrate
+
+================================================================
