@@ -1,49 +1,78 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard - My File Uploader</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — File Vault</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
+<body class="page-wrapper">
 
-<body>
-  <header>
-    <h1>File Uploader</h1>
-    <p>Selamat datang, <strong><%= user.email %></strong>!</p>
-    <nav>
-      <a href="/logout">Logout</a>
-    </nav>
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="container inner">
+      <a href="/" class="logo">
+        <div class="logo-icon">🗂️</div>
+        File Vault
+      </a>
+      <div class="nav-actions">
+        <span class="user-badge">📧 <%= user.email %></span>
+        <a href="/logout" class="btn btn--ghost btn--sm">Logout</a>
+      </div>
+    </div>
   </header>
 
+  <!-- MAIN -->
   <main>
-    <h2>My Folders</h2>
+    <div class="container">
 
-    <div style="margin-bottom: 20px;">
-      <a href="/folders/create" style="padding: 10px; background: blue; color: white; text-decoration: none; border-radius: 5px;">
-        + New Folder
-      </a>
-    </div>
+      <!-- Page heading -->
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h1 class="page-title">My Folders</h1>
+          <p class="page-subtitle">Kelola folder dan file Anda</p>
+        </div>
+        <a href="/folders/create" class="btn btn--primary">
+          <span>＋</span> New Folder
+        </a>
+      </div>
 
-    <ul>
+      <!-- Folder grid -->
       <% if (typeof folders !== 'undefined' && folders.length > 0) { %>
-      <% folders.forEach(folder => { %>
-      <li>
-        <a href="/folders/<%= folder.id %>"><%= folder.name %></a>
-        <small>(Dibuat pada: <%= folder.createdAt.toDateString() %>)</small>
-
-        <a href="/folders/<%= folder.id %>/edit" style="margin-left: 10px; color: green; text-decoration: none;">[Edit]</a>
-        
-        <form action="/folders/<%= folder.id %>/delete" method="POST" style="display:inline;" onsubmit="return confirm('Yakin ingin menghapus folder ini?')">
-          <button type="submit" style="color: red; border: none; background: none; cursor: pointer;">[Hapus]</button>
-        </form>
-      </li>
-      <% }) %>
+        <div class="grid-folders">
+          <% folders.forEach(folder => { %>
+            <div class="folder-card">
+              <div class="folder-icon">📁</div>
+              <div>
+                <div class="folder-name"><%= folder.name %></div>
+                <div class="folder-meta">Dibuat <%= folder.createdAt.toDateString() %></div>
+              </div>
+              <div class="folder-actions">
+                <a href="/folders/<%= folder.id %>" class="btn btn--secondary btn--sm" style="flex:1;justify-content:center;">
+                  Buka
+                </a>
+                <a href="/folders/<%= folder.id %>/edit" class="btn btn--ghost btn--icon" title="Edit">✏️</a>
+                <form action="/folders/<%= folder.id %>/delete" method="POST" style="margin:0;" onsubmit="return confirm('Yakin ingin menghapus folder ini?')">
+                  <button type="submit" class="btn btn--danger btn--icon" title="Hapus">🗑️</button>
+                </form>
+              </div>
+            </div>
+          <% }) %>
+        </div>
       <% } else { %>
-      <p>Belum ada folder di sini.</p>
+        <div class="empty-state">
+          <div class="empty-state-icon">📂</div>
+          <div class="empty-state-title">Belum ada folder</div>
+          <div class="empty-state-desc">Buat folder pertama Anda untuk mulai menyimpan file</div>
+          <a href="/folders/create" class="btn btn--primary mt-4">
+            ＋ Buat Folder Pertama
+          </a>
+        </div>
       <% } %>
-    </ul>
-  </main>
-</body>
 
+    </div>
+  </main>
+
+</body>
 </html>

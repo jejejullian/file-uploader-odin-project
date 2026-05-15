@@ -1,23 +1,72 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Detail File - <%= file.name %></title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detail File — File Vault</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
-    <h1>Informasi File</h1>
-    <ul>
-        <li><strong>Nama:</strong> <%= file.name %></li>
-        <li><strong>Ukuran:</strong> <%= (file.size / 1024).toFixed(2) %> KB</li>
-        <li><strong>Waktu Upload:</strong> <%= file.uploadedAt.toLocaleString('id-ID') %></li>
-    </ul>
+<body class="page-wrapper">
 
-    <a href="<%= file.url %>" download="<%= file.name %>">
-        <button type="button">Download File</button>
-    </a>
+  <header class="site-header">
+    <div class="container inner">
+      <a href="/" class="logo">
+        <div class="logo-icon">🗂️</div>
+        File Vault
+      </a>
+    </div>
+  </header>
 
-    <hr>
-    <a href="/folders/<%= file.folderId %>">← Kembali ke Folder</a>
+  <main>
+    <div class="container" style="max-width:600px;">
+
+      <nav class="breadcrumb">
+        <a href="/">Dashboard</a>
+        <span class="breadcrumb-sep">›</span>
+        <a href="/folders/<%= file.folderId %>">Folder</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="truncate"><%= file.name %></span>
+      </nav>
+
+      <h1 class="page-title">Detail File</h1>
+      <p class="page-subtitle">Informasi lengkap tentang file Anda</p>
+
+      <!-- File Card -->
+      <div class="card card--elevated mb-4">
+        <div style="text-align:center;padding:1.5rem 0;">
+          <div style="font-size:4rem;margin-bottom:0.75rem;">📄</div>
+          <h2 style="font-size:1rem;font-weight:600;word-break:break-all;"><%= file.name %></h2>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Meta info -->
+        <div style="display:grid;gap:0.75rem;">
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-muted">Ukuran</span>
+            <span class="badge badge--primary"><%= (file.size / 1024).toFixed(2) %> KB</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-muted">Waktu Upload</span>
+            <span class="text-sm"><%= file.uploadedAt.toLocaleString('id-ID') %></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex gap-3">
+        <a href="<%= file.url %>" download="<%= file.name %>"
+          class="btn btn--primary" style="flex:1;justify-content:center;padding:0.75rem;">
+          ⬇️ Download File
+        </a>
+        <a href="/folders/<%= file.folderId %>" class="btn btn--ghost" style="padding:0.75rem 1.25rem;">
+          ← Kembali
+        </a>
+      </div>
+
+    </div>
+  </main>
+
 </body>
 </html>

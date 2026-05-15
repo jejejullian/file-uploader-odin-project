@@ -1,18 +1,52 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>create folder</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buat Folder — File Vault</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
-    <h1>Create Folder</h1>
+<body class="page-wrapper">
 
-    <form action="/folders/create" method="post">
-        <label for="name">Nama Folder:</label>
-        <input type="text" name="name" id="name">
-        <button type="submit">Buat Folder</button>
-    </form>
-    
+  <header class="site-header">
+    <div class="container inner">
+      <a href="/" class="logo">
+        <div class="logo-icon">🗂️</div>
+        File Vault
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <div class="container" style="max-width:520px;">
+
+      <nav class="breadcrumb">
+        <a href="/">Dashboard</a>
+        <span class="breadcrumb-sep">›</span>
+        <span>Buat Folder</span>
+      </nav>
+
+      <h1 class="page-title">Buat Folder Baru</h1>
+      <p class="page-subtitle">Organisasi file Anda dalam folder yang terstruktur</p>
+
+      <div class="card">
+        <form action="/folders/create" method="POST">
+          <div class="form-group">
+            <label class="form-label" for="name">Nama Folder</label>
+            <input class="form-input" type="text" id="name" name="name" placeholder="Contoh: Proyek Desain" required autofocus>
+          </div>
+          <div class="flex gap-3 mt-4">
+            <button type="submit" class="btn btn--primary" style="flex:1;">
+              📁 Buat Folder
+            </button>
+            <a href="/" class="btn btn--ghost">Batal</a>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </main>
+
 </body>
 </html>

@@ -1,91 +1,133 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>
-    <%= folder.name %> - Detail Folder
-  </title>
-
+  <title><%= folder.name %> — File Vault</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
+<body class="page-wrapper">
 
-<body>
+  <header class="site-header">
+    <div class="container inner">
+      <a href="/" class="logo">
+        <div class="logo-icon">🗂️</div>
+        File Vault
+      </a>
+    </div>
+  </header>
 
-  <body>
-    <header>
-      <h1>Folder: <%= folder.name %>
-      </h1>
-      <a href="/">← Kembali ke Dashboard</a>
-    </header>
+  <main>
+    <div class="container">
 
-    <main>
-      <section style="margin-top: 20px; padding: 15px; border: 1px solid #ccc;">
-        <h3>Upload File Baru</h3>
+      <nav class="breadcrumb">
+        <a href="/">Dashboard</a>
+        <span class="breadcrumb-sep">›</span>
+        <span><%= folder.name %></span>
+      </nav>
+
+      <!-- Folder Header -->
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-3">
+          <div style="font-size:2rem;">📁</div>
+          <div>
+            <h1 class="page-title"><%= folder.name %></h1>
+            <p class="page-subtitle" style="margin-bottom:0;">
+              <%= folder.files ? folder.files.length : 0 %> file
+            </p>
+          </div>
+        </div>
+        <div class="flex gap-2">
+          <a href="/folders/<%= folder.id %>/edit" class="btn btn--ghost btn--sm">✏️ Edit</a>
+        </div>
+      </div>
+
+      <!-- Upload Zone -->
+      <div class="card mb-6">
+        <p class="section-title">Upload File Baru</p>
         <form action="/files/upload" method="POST" enctype="multipart/form-data">
           <input type="hidden" name="folderId" value="<%= folder.id %>">
-
-          <input type="file" name="file_uploader" required>
-
-          <button type="submit">Upload ke Folder Ini</button>
+          <div class="upload-zone">
+            <div class="upload-zone-icon">📤</div>
+            <p class="upload-zone-text">Pilih file untuk diupload ke folder ini</p>
+            <input class="form-input" type="file" name="file_uploader" required style="max-width:300px;margin:0 auto 1rem;">
+            <br>
+            <button type="submit" class="btn btn--primary">Upload File</button>
+          </div>
         </form>
-      </section>
+      </div>
 
-      <section style="margin-top: 30px;">
-        <h3>Daftar File</h3>
-        <ul>
-          <% if (folder.files && folder.files.length> 0) { %>
-          <% folder.files.forEach(file=> { %>
-          <li>
-            <a href="/files/<%= file.id %>"><%= file.name %></a>
-            (<%= (file.size / 1024).toFixed(2) %> KB)
+      <!-- File List -->
+      <div class="card mb-6">
+        <p class="section-title">Daftar File</p>
+        <% if (folder.files && folder.files.length > 0) { %>
+          <div class="file-list">
+            <% folder.files.forEach(file => { %>
+              <div class="file-item">
+                <div class="file-icon">📄</div>
+                <div class="file-info">
+                  <a href="/files/<%= file.id %>" class="file-name"><%= file.name %></a>
+                  <div class="file-size"><%= (file.size / 1024).toFixed(2) %> KB</div>
+                </div>
+                <div class="file-actions">
+                  <form action="/files/<%= file.id %>/delete" method="POST" style="margin:0;" onsubmit="return confirm('Hapus file ini?')">
+                    <button type="submit" class="btn btn--danger btn--sm">🗑️ Hapus</button>
+                  </form>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        <% } else { %>
+          <div class="empty-state" style="padding:2.5rem 1rem;">
+            <div class="empty-state-icon">📄</div>
+            <div class="empty-state-title">Folder masih kosong</div>
+            <div class="empty-state-desc">Upload file pertama Anda di atas</div>
+          </div>
+        <% } %>
+      </div>
 
-            <form action="/files/<%= file.id %>/delete" method="post" style="display: inline;" onsubmit="return confirm('Yakin ingin menghapus file ini?')">
-              <button type="submit" style="color: red; border: none; background: none; cursor: pointer;">
-                [Hapus]
-              </button>
-            </form>
-          </li>
-          <% }) %>
-          <% } else { %>
-          <p>Folder ini kosong. Silakan upload file pertama kamu!</p>
-          <% } %>
-        </ul>
-      </section>
-
-      <hr>
-
-      <section style="margin-top: 40px; padding: 15px; border: 2px dashed #007bff; border-radius: 8px;">
-        <h3>🔗 Bagikan Folder Ini</h3>
+      <!-- Share Folder -->
+      <div class="share-box">
+        <p class="section-title">🔗 Bagikan Folder</p>
         <form action="/folders/<%= folder.id %>/share" method="POST">
-          <label for="duration">Masa Berlaku Link:</label>
-          <select name="duration" id="duration" required>
-            <option value="1">1 Hari</option>
-            <option value="3">3 Hari</option>
-            <option value="7">7 Hari</option>
-            <option value="10">10 Hari</option>
-          </select>
-          <button type="submit" style="background-color: #007bff; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">
-            Generate Share Link
-          </button>
+          <div class="flex items-center gap-3">
+            <div class="form-group" style="flex:1;margin-bottom:0;">
+              <label class="form-label" for="duration">Masa berlaku link</label>
+              <select class="form-input" name="duration" id="duration" required>
+                <option value="1">1 Hari</option>
+                <option value="3">3 Hari</option>
+                <option value="7">7 Hari</option>
+                <option value="10">10 Hari</option>
+              </select>
+            </div>
+            <div style="margin-top:1.25rem;">
+              <button type="submit" class="btn btn--primary">Generate Link</button>
+            </div>
+          </div>
         </form>
 
         <% if (folder.shareLinks && folder.shareLinks.length > 0) { %>
-        <div style="margin-top: 15px;">
-          <p><strong>Link Aktif:</strong></p>
-          <ul>
+          <div class="mt-4">
+            <p class="text-xs text-muted font-semibold mb-2">Link Aktif:</p>
             <% folder.shareLinks.forEach(link => { %>
-            <li>
-              <input type="text" readonly value="http://localhost:3000/share/<%= link.id %>" style="width: 300px;">
-              <small>(Berakhir: <%= link.expiresAt.toLocaleString('id-ID') %>)</small>
-            </li>
+              <div class="share-link-row">
+                <input class="share-link-input" type="text" readonly
+                  value="http://localhost:3000/share/<%= link.id %>"
+                  onclick="this.select()">
+                <button type="button" class="btn btn--ghost btn--sm"
+                  onclick="navigator.clipboard.writeText('http://localhost:3000/share/<%= link.id %>')">
+                  📋
+                </button>
+              </div>
+              <p class="share-link-expire">Berakhir: <%= link.expiresAt.toLocaleString('id-ID') %></p>
             <% }) %>
-          </ul>
-        </div>
+          </div>
         <% } %>
-      </section>
-    </main>
-  </body>
-</body>
+      </div>
 
+    </div>
+  </main>
+
+</body>
 </html>

@@ -1,20 +1,54 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Masuk — File Vault</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  <h1>Masukkan akun anda</h1>
-  <% if (error) { %>
-  <p style="color: red;"><%= error %></p>
-  <% } %>
-  <form action="/login" method="POST">
-    <input type="email" name="email" placeholder="Email" required>
-    <input type="password" name="password" placeholder="Password" required>
-    <button type="submit">Masuk</button>
-  </form>
-  <a href="/register">Tidak punya akun? Buat</a>
+  <div class="auth-page">
+
+    <a href="/" class="auth-logo">
+      <div class="logo-icon">🗂️</div>
+      File Vault
+    </a>
+
+    <div class="card--auth" style="max-width:420px;width:100%;">
+      <h1 style="font-size:1.5rem;font-weight:700;margin-bottom:0.35rem;">Selamat datang kembali</h1>
+      <p class="text-sm text-muted" style="margin-bottom:1.75rem;">Masuk ke akun Anda untuk melanjutkan</p>
+
+      <% if (error) { %>
+        <div class="alert alert--error">
+          <span>⚠️</span> <%= error %>
+        </div>
+      <% } %>
+
+      <form action="/login" method="POST">
+        <div class="form-group">
+          <label class="form-label" for="email">Email</label>
+          <input class="form-input" type="email" id="email" name="email" placeholder="nama@email.com" required autocomplete="email">
+        </div>
+
+        <div class="form-group" style="margin-bottom:1.5rem;">
+          <label class="form-label" for="password">Password</label>
+          <input class="form-input" type="password" id="password" name="password" placeholder="••••••••" required autocomplete="current-password">
+        </div>
+
+        <button type="submit" class="btn btn--primary btn--full" style="padding:0.75rem;">
+          Masuk ke Akun
+        </button>
+      </form>
+
+      <div class="divider"></div>
+
+      <p class="text-sm text-muted" style="text-align:center;">
+        Belum punya akun?
+        <a href="/register" style="color:var(--color-primary);text-decoration:none;font-weight:500;">Daftar sekarang</a>
+      </p>
+    </div>
+
+  </div>
 </body>
 </html>

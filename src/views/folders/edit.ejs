@@ -1,18 +1,55 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Folder</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Folder — File Vault</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
-    <h1>Edit Nama Folder</h1>
-    <form action="/folders/<%= folder.id %>/edit" method="post">
-        <label for="name">Nama Baru:</label>
-        <input type="text" name="name" id="name" value="<%= folder.name %>" required>
-        <button type="submit">Simpan Perubahan</button>
-    </form>
-    <br>
-    <a href="/">batal</a>
+<body class="page-wrapper">
+
+  <header class="site-header">
+    <div class="container inner">
+      <a href="/" class="logo">
+        <div class="logo-icon">🗂️</div>
+        File Vault
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <div class="container" style="max-width:520px;">
+
+      <nav class="breadcrumb">
+        <a href="/">Dashboard</a>
+        <span class="breadcrumb-sep">›</span>
+        <a href="/folders/<%= folder.id %>"><%= folder.name %></a>
+        <span class="breadcrumb-sep">›</span>
+        <span>Edit</span>
+      </nav>
+
+      <h1 class="page-title">Edit Folder</h1>
+      <p class="page-subtitle">Ubah nama folder Anda</p>
+
+      <div class="card">
+        <form action="/folders/<%= folder.id %>/edit" method="POST">
+          <div class="form-group">
+            <label class="form-label" for="name">Nama Baru</label>
+            <input class="form-input" type="text" id="name" name="name"
+              value="<%= folder.name %>" required autofocus>
+          </div>
+          <div class="flex gap-3 mt-4">
+            <button type="submit" class="btn btn--primary" style="flex:1;">
+              💾 Simpan Perubahan
+            </button>
+            <a href="/" class="btn btn--ghost">Batal</a>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </main>
+
 </body>
 </html>
