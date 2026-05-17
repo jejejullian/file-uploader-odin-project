@@ -31,3 +31,7 @@ desktop.ini
 # ── Build artifacts ──
 dist/
 build/
+
+# ── Documentation & Text Files ──
+DOCUMENTATION.md
+*.txt
