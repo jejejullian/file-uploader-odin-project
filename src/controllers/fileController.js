@@ -56,6 +56,10 @@ module.exports = {
 
       if (!file) return res.status(404).send("File tidak ditemukan.");
 
+      if (file.userId !== req.user.id) {
+        return res.status(403).send("Anda tidak memiliki akses untuk menghapus file ini.");
+      }
+
       const parts = file.url.split("/");
       const fileNameWithExtension = parts.pop();
       const folderName = parts.pop();
