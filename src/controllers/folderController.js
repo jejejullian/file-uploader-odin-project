@@ -1,7 +1,6 @@
-const { error } = require("node:console");
 const prisma = require("../config/prisma");
 
-const db = (module.exports = {
+module.exports = {
   index: async (req, res) => {
     try {
       const folders = await prisma.folder.findMany({ where: { userId: req.user.id }, orderBy: { createdAt: "desc" } });
@@ -12,7 +11,7 @@ const db = (module.exports = {
       });
     } catch (err) {
       res.render("dashboard", {
-        eerror: "Gagal memuat daftar folder",
+        error: "Gagal memuat daftar folder",
         user: req.user,
         folders: [],
       });
@@ -87,7 +86,7 @@ const db = (module.exports = {
     const { name } = req.body;
 
     try {
-      await prisma.folder.update({
+      await prisma.folder.updateMany({
         where: { id: parseInt(id), userId: req.user.id },
         data: { name: name },
       });
@@ -101,7 +100,7 @@ const db = (module.exports = {
   delete: async (req, res) => {
     const { id } = req.params;
     try {
-      await prisma.folder.delete({
+      await prisma.folder.deleteMany({
         where: {
           id: parseInt(id),
           userId: req.user.id,
@@ -139,27 +138,27 @@ const db = (module.exports = {
   showPublicFolder: async (req, res) => {
     const { uuid } = req.params;
     try {
-        const shareLink = await prisma.shareLink.findUnique({
-            where: { id: uuid },
-            include: { 
-                folder: { 
-                    include: { files: true } 
-                } 
-            }
-        });
-
-        if (!shareLink) return res.status(404).send("Link tidak valid.");
-
-        if (new Date() > shareLink.expiresAt) {
-            return res.status(410).send("Link ini sudah kadaluwarsa.");
+      const shareLink = await prisma.shareLink.findUnique({
+        where: { id: uuid },
+        include: {
+          folder: {
+            include: { files: true }
+          }
         }
+      });
 
-        res.render("folders/share_view", { 
-            folder: shareLink.folder 
-        });
+      if (!shareLink) return res.status(404).send("Link tidak valid.");
+
+      if (new Date() > shareLink.expiresAt) {
+        return res.status(410).send("Link ini sudah kadaluwarsa.");
+      }
+
+      res.render("folders/share_view", {
+        folder: shareLink.folder
+      });
     } catch (err) {
-        console.error(err);
-        res.status(500).send("Terjadi kesalahan.");
+      console.error(err);
+      res.status(500).send("Terjadi kesalahan.");
     }
-}
-});
+  }
+};
